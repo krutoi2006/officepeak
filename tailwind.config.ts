@@ -5,8 +5,8 @@ export default <Partial<Config>>{
   theme: {
     extend: {
       fontFamily: { sans: ['Inter', 'sans-serif'] },
-      colors: { primary: '#1A1A1A', secondary: '#666666', surface: '#F7F7F5', border: '#E8E8E5' },
-      boxShadow: { subtle: '0 8px 30px rgba(0,0,0,.05)' }
+      colors: { primary: '#171A19', secondary: '#686C69', surface: '#F5F5F1', border: '#E4E5DF', accent: '#9A5B35', accentSoft: '#D7B49D' },
+      boxShadow: { subtle: '0 16px 48px rgba(20,25,23,.09)' }
     }
   }
 }

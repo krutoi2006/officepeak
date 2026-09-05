@@ -14,8 +14,15 @@ type HydrationStrategies = {
 type LazyComponent<T> = DefineComponent<HydrationStrategies, {}, {}, {}, {}, {}, {}, { hydrated: () => void }> & T
 
 interface _GlobalComponents {
+  Breadcrumbs: typeof import("../../components/Breadcrumbs.vue")['default']
   CartDrawer: typeof import("../../components/CartDrawer.vue")['default']
+  CollectionCard: typeof import("../../components/CollectionCard.vue")['default']
+  HeroSlider: typeof import("../../components/HeroSlider.vue")['default']
+  LeadModal: typeof import("../../components/LeadModal.vue")['default']
   ProductCard: typeof import("../../components/ProductCard.vue")['default']
+  QuantityInput: typeof import("../../components/QuantityInput.vue")['default']
+  SiteFooter: typeof import("../../components/SiteFooter.vue")['default']
+  SiteHeader: typeof import("../../components/SiteHeader.vue")['default']
   NuxtWelcome: typeof import("../../node_modules/nuxt/dist/app/components/welcome.vue")['default']
   NuxtLayout: typeof import("../../node_modules/nuxt/dist/app/components/nuxt-layout")['default']
   NuxtErrorBoundary: typeof import("../../node_modules/nuxt/dist/app/components/nuxt-error-boundary.vue")['default']
@@ -39,8 +46,15 @@ interface _GlobalComponents {
   Html: typeof import("../../node_modules/nuxt/dist/head/runtime/components")['Html']
   Body: typeof import("../../node_modules/nuxt/dist/head/runtime/components")['Body']
   NuxtIsland: typeof import("../../node_modules/nuxt/dist/app/components/nuxt-island")['default']
+  LazyBreadcrumbs: LazyComponent<typeof import("../../components/Breadcrumbs.vue")['default']>
   LazyCartDrawer: LazyComponent<typeof import("../../components/CartDrawer.vue")['default']>
+  LazyCollectionCard: LazyComponent<typeof import("../../components/CollectionCard.vue")['default']>
+  LazyHeroSlider: LazyComponent<typeof import("../../components/HeroSlider.vue")['default']>
+  LazyLeadModal: LazyComponent<typeof import("../../components/LeadModal.vue")['default']>
   LazyProductCard: LazyComponent<typeof import("../../components/ProductCard.vue")['default']>
+  LazyQuantityInput: LazyComponent<typeof import("../../components/QuantityInput.vue")['default']>
+  LazySiteFooter: LazyComponent<typeof import("../../components/SiteFooter.vue")['default']>
+  LazySiteHeader: LazyComponent<typeof import("../../components/SiteHeader.vue")['default']>
   LazyNuxtWelcome: LazyComponent<typeof import("../../node_modules/nuxt/dist/app/components/welcome.vue")['default']>
   LazyNuxtLayout: LazyComponent<typeof import("../../node_modules/nuxt/dist/app/components/nuxt-layout")['default']>
   LazyNuxtErrorBoundary: LazyComponent<typeof import("../../node_modules/nuxt/dist/app/components/nuxt-error-boundary.vue")['default']>

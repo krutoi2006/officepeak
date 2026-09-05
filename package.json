@@ -6,7 +6,8 @@
     "dev": "nuxt dev --host 127.0.0.1 --port 3000",
     "build": "nuxt build",
     "preview": "nuxt preview",
-    "typecheck": "nuxt typecheck"
+    "typecheck": "nuxt typecheck",
+    "smoke": "node scripts/smoke.mjs"
   },
   "dependencies": {
     "@nuxtjs/tailwindcss": "^6.14.0",

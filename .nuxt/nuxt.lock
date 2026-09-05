@@ -1,9 +1,0 @@
-{
-  "pid": 3488,
-  "startedAt": 1785525217189,
-  "command": "dev",
-  "cwd": "C:/Users/Krutoi2006/newOFFICEPEAK",
-  "port": 3000,
-  "hostname": "127.0.0.1",
-  "url": "http://127.0.0.1:3000"
-}

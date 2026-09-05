@@ -1,0 +1,1 @@
+import{u as o}from"./DieoKfsv.js";const c=()=>{const e=o("lead-modal-open",()=>!1),a=o("lead-modal-type",()=>"callback");return{isOpen:e,type:a,open:l=>{a.value=l,e.value=!0},close:()=>{e.value=!1}}};export{c as u};

@@ -3,7 +3,7 @@ name: Deploy Nuxt to GitHub Pages
 on:
   push:
     branches:
-      - main
+      - new-ver
   workflow_dispatch:
 
 permissions:
@@ -45,3 +45,11 @@ jobs:
           publish_dir: ./.output/public
           publish_branch: gh-pages
           force_orphan: true
+
+      - name: Show website URL
+        shell: bash
+        run: |
+          REPOSITORY_NAME="${GITHUB_REPOSITORY#*/}"
+          SITE_URL="https://${GITHUB_REPOSITORY_OWNER}.github.io/${REPOSITORY_NAME}/"
+          echo "### Website" >> "$GITHUB_STEP_SUMMARY"
+          echo "${SITE_URL}" >> "$GITHUB_STEP_SUMMARY"

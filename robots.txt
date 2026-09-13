@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /checkout
+Disallow: /quote
+
+Sitemap: https://officepeak.ru/sitemap.xml

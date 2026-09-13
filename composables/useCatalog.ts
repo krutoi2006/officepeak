@@ -4,7 +4,7 @@ import { emptyCatalog } from '~/data/catalog'
 const KEY = 'catalog-runtime'
 
 export const useCatalog = async () => {
-  const requestFetch = useRequestFetch()
+  const requestFetch = useCatalogRequest()
   const state = await useAsyncData<CatalogApiResponse>(KEY, () => requestFetch<CatalogApiResponse>('/api/catalog'))
   return {
     ...state,

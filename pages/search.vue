@@ -5,7 +5,7 @@ import type { Collection, ProductListResponse } from '~/types/catalog'
 const route = useRoute()
 const router = useRouter()
 const { catalog } = await useCatalog()
-const requestFetch = useRequestFetch()
+const requestFetch = useCatalogRequest()
 const categories = computed(() => catalog.value.categories)
 const { data: collectionData } = await useAsyncData<Collection[]>(
   'search-collections',

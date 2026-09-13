@@ -5,7 +5,9 @@ import type { Collection, ProductListResponse } from '~/types/catalog'
 const route = useRoute()
 const router = useRouter()
 const { catalog } = await useCatalog()
-const requestFetch = useRequestFetch()
+const requestFetch = useCatalogRequest()
+const runtimeConfig = useRuntimeConfig()
+const staticCatalog = Boolean(runtimeConfig.public.staticCatalog)
 const categories = computed(() => catalog.value.categories)
 const { data: collectionData } = await useAsyncData<Collection[]>(
   'catalog-collection-list',
@@ -83,6 +85,7 @@ usePageSeo('Каталог офисной мебели', 'Категории, к
 
 <template>
   <div class="container-page py-10 md:py-14">
+    <div v-if="staticCatalog" class="mb-8 border border-amber-200 bg-amber-50 px-5 py-4 text-sm text-amber-900">Временная статическая версия каталога. Показана подборка товаров; полный каталог будет доступен после запуска основного сервера.</div>
     <Breadcrumbs :items="[{ label: 'Главная', to: '/' }, { label: 'Каталог' }]" />
     <div class="mb-12 grid gap-5 lg:grid-cols-[1fr_.8fr] lg:items-end"><div><h1 class="display-title">Каталог офисной мебели</h1></div><p class="max-w-2xl leading-7 text-secondary lg:justify-self-end">Мебель для рабочих мест, переговорных и других зон офиса.</p></div>
 

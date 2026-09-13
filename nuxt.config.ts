@@ -1,3 +1,5 @@
+const staticCatalog = process.env.NUXT_PUBLIC_STATIC_CATALOG === 'true'
+
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
   devtools: { enabled: false },
@@ -7,8 +9,16 @@ export default defineNuxtConfig({
   },
   modules: ['@nuxtjs/tailwindcss'],
   css: ['~/assets/css/main.css'],
-  nitro: { preset: 'node-server' },
+  nitro: {
+    preset: staticCatalog ? 'static' : 'node-server',
+    prerender: staticCatalog
+      ? { crawlLinks: false, routes: ['/', '/catalog'] }
+      : undefined,
+  },
   runtimeConfig: {
+    public: {
+      staticCatalog: false,
+    },
     smtp: {
       host: 'smtp.yandex.ru',
       port: 465,

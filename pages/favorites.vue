@@ -2,7 +2,7 @@
 import type { ProductListResponse } from '~/types/catalog'
 
 const { favorites } = useShop()
-const requestFetch = useRequestFetch()
+const requestFetch = useCatalogRequest()
 const favoriteIds = computed(() => favorites.value.slice(0, 100).join(','))
 const { data: favoriteData } = await useAsyncData<ProductListResponse>(
   'favorite-products',

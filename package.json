@@ -9,6 +9,7 @@
     "typecheck": "nuxt typecheck",
     "catalog:sync:unitex": "node --env-file-if-exists=.env scripts/catalog-sync-unitex.mjs",
     "catalog:sync:riva": "node --env-file-if-exists=.env scripts/catalog-sync-riva.mjs",
+    "catalog:export:static": "node scripts/export-static-catalog.mjs",
     "test:unitex": "node --test tests/unitex-sync.test.mjs",
     "test:riva": "node --test tests/riva-sync.test.mjs",
     "test:catalog-sync": "node --test tests/unitex-sync.test.mjs tests/riva-sync.test.mjs",

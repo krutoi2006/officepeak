@@ -6,7 +6,7 @@ import type { HomeCatalogResponse } from '~/types/catalog'
 const { open: openLead } = useLeadModal()
 const { catalog } = await useCatalog()
 const categories = computed(() => catalog.value.categories)
-const requestFetch = useRequestFetch()
+const requestFetch = useCatalogRequest()
 const { data: home } = await useAsyncData<HomeCatalogResponse>('catalog-home', () => requestFetch<HomeCatalogResponse>('/api/catalog/home'))
 const featuredCollections = computed(() => home.value?.featuredCollections ?? [])
 const featuredProducts = computed(() => home.value?.products ?? [])

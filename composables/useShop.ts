@@ -4,7 +4,7 @@ import { isOrderablePrice } from '~/data/catalog'
 const clampQuantity = (quantity: number) => Math.max(1, Math.min(999, Math.round(quantity || 1)))
 
 export const useShop = () => {
-  const requestFetch = useRequestFetch()
+  const requestFetch = useCatalogRequest()
   const cart = useCookie<CartLine[]>('officepeak-cart', { default: () => [], maxAge: 60 * 60 * 24 * 90, sameSite: 'lax', watch: true })
   const favorites = useCookie<string[]>('officepeak-favorites', { default: () => [], maxAge: 60 * 60 * 24 * 365, sameSite: 'lax', watch: true })
   const cartOpen = useState('cartOpen', () => false)

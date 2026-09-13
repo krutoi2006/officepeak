@@ -7,7 +7,7 @@ const route = useRoute()
 const { catalog } = await useCatalog()
 const category = categoryBySlug(catalog.value, String(route.params.slug))
 if (!category) throw createError({ statusCode: 404, statusMessage: 'Категория не найдена' })
-const requestFetch = useRequestFetch()
+const requestFetch = useCatalogRequest()
 const page = ref(1)
 const perPage = 24
 const { data: collectionData } = await useAsyncData<Collection[]>(

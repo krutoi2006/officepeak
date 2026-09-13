@@ -5,7 +5,7 @@ import type { Collection, ProductListResponse } from '~/types/catalog'
 
 const route = useRoute()
 const { catalog } = await useCatalog()
-const requestFetch = useRequestFetch()
+const requestFetch = useCatalogRequest()
 const { data: collectionData } = await useAsyncData<Collection>(
   `collection-${String(route.params.slug)}`,
   () => requestFetch<Collection>(`/api/catalog/collections/${String(route.params.slug)}`),

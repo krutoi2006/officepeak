@@ -1,3 +1,9 @@
+<script setup lang="ts">
+await useCatalog()
+const { hydrateCart } = useShop()
+await hydrateCart()
+</script>
+
 <template>
   <div class="flex min-h-screen flex-col">
     <SiteHeader />

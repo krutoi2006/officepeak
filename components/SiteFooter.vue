@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { categories } from '~/data/catalog'
 import { publicOfferDisclaimer, siteConfig } from '~/config/site'
 import { ArrowUpRight } from 'lucide-vue-next'
 
 const services = [['Дизайн-проект', '/design-project'], ['Оплата', '/payment'], ['Доставка', '/delivery'], ['Подъём', '/lifting'], ['Сборка', '/assembly'], ['Гарантия', '/warranty'], ['Возврат', '/returns']]
 const clients = [['Государственным заказчикам', '/government'], ['Коммерческим организациям', '/business'], ['Дизайнерам', '/designers']]
+const { catalog } = useCatalogData()
+const categories = computed(() => catalog.value.categories)
 </script>
 
 <template>

@@ -1,8 +1,17 @@
 <script setup lang="ts">
-import { products } from '~/data/catalog'
+import type { ProductListResponse } from '~/types/catalog'
 
 const { favorites } = useShop()
-const list = computed(() => products.filter(product => favorites.value.includes(product.id)))
+const requestFetch = useRequestFetch()
+const favoriteIds = computed(() => favorites.value.slice(0, 100).join(','))
+const { data: favoriteData } = await useAsyncData<ProductListResponse>(
+  'favorite-products',
+  () => favoriteIds.value
+    ? requestFetch<ProductListResponse>('/api/catalog/product-list', { query: { ids: favoriteIds.value, limit: 100 } })
+    : Promise.resolve({ items: [], total: 0, limit: 100, offset: 0, hasMore: false, facets: { priceFloor: 0, priceCeil: 0, colors: [] } }),
+  { watch: [favoriteIds] },
+)
+const list = computed(() => (favoriteData.value?.items ?? []).filter(product => favorites.value.includes(product.id)))
 usePageSeo('Избранное', 'Сохранённые товары OFFICEPEAK.', '/favorites')
 </script>
 

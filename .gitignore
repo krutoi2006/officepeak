@@ -1,0 +1,57 @@
+# Dependencies
+node_modules/
+
+# Nuxt build and development output
+.nuxt/
+.output/
+.data/
+.nitro/
+.cache/
+dist/
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Logs and runtime process files
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.pid
+*.pid.lock
+
+# Generated supplier catalogs and exports
+data/generated/
+exports/*.csv
+exports/*.json
+
+# Test and coverage output
+coverage/
+.nyc_output/
+playwright-report/
+test-results/
+blob-report/
+
+# Temporary files and local browser profiles
+.tmp-*/
+*.tmp
+*.temp
+*.tsbuildinfo
+
+# IDE and operating-system files
+.vscode/
+.idea/
+.fleet/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+Desktop.ini

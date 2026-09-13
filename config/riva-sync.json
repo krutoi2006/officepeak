@@ -1,0 +1,17 @@
+{
+  "feedTypes": [1, 2, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16, 17, 18, 19],
+  "categoryByRootId": {
+    "3304": "executive-offices",
+    "3376": "staff-furniture",
+    "3481": "reception-desks",
+    "3375": "chairs",
+    "3466": "meeting-areas",
+    "4141": "storage-systems",
+    "3293": "hotel-furniture",
+    "3527": "sofas-and-armchairs",
+    "4799": "acoustic-solutions",
+    "4600": "coffee-tables",
+    "5004": "adjustable-desks"
+  },
+  "maxImagesPerProduct": 12
+}

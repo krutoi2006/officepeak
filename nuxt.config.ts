@@ -7,6 +7,18 @@ export default defineNuxtConfig({
   },
   modules: ['@nuxtjs/tailwindcss'],
   css: ['~/assets/css/main.css'],
+  nitro: { preset: 'node-server' },
+  runtimeConfig: {
+    smtp: {
+      host: 'smtp.yandex.ru',
+      port: 465,
+      secure: true,
+      user: 'OFFICEPEAK.1@yandex.ru',
+      pass: '',
+      from: 'OFFICEPEAK <OFFICEPEAK.1@yandex.ru>',
+      to: 'OFFICEPEAK.1@yandex.ru',
+    },
+  },
   vite: {
     optimizeDeps: {
       exclude: ['lucide-vue-next']

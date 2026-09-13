@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { ChevronDown, Heart, Menu, Search, ShoppingBag, X } from 'lucide-vue-next'
-import { categories, formatPrice } from '~/data/catalog'
+import { formatPrice } from '~/data/catalog'
 import { siteConfig } from '~/config/site'
 
 const route = useRoute()
+const { catalog } = useCatalogData()
+const categories = computed(() => catalog.value.categories)
 const { cartOpen, menuOpen, count, total, favorites } = useShop()
 const { open: openLead } = useLeadModal()
 const header = ref<HTMLElement | null>(null)
@@ -65,7 +67,10 @@ onBeforeUnmount(() => { document.removeEventListener('click', onDocumentClick); 
     <div class="container-page flex h-[76px] items-center gap-4 lg:h-[88px]">
       <button ref="mobileMenuButton" type="button" class="icon-button lg:hidden" aria-label="Открыть меню" @click="menuOpen = true"><Menu class="h-5 w-5" /></button>
       <NuxtLink to="/" class="shrink-0" aria-label="OFFICEPEAK — главная">
-        <span class="block text-xl font-semibold tracking-[-.06em] sm:text-2xl">OFFICE<span class="font-light">PEAK</span></span>
+        <span class="flex items-baseline gap-2 whitespace-nowrap">
+          <span class="text-xl font-semibold tracking-[-.06em] sm:text-2xl">OFFICE<span class="font-light">PEAK</span></span>
+          <span class="hidden text-xl font-semibold tracking-[-.06em] sm:inline sm:text-2xl"><span class="font-light">|</span> ОФИС<span class="font-light">ПИК</span></span>
+        </span>
         <span class="hidden text-[9px] tracking-wide text-secondary xl:block">{{ siteConfig.tagline }}</span>
       </NuxtLink>
       <nav class="ml-5 hidden h-full items-center gap-7 text-sm lg:flex" aria-label="Основная навигация">
@@ -104,7 +109,7 @@ onBeforeUnmount(() => { document.removeEventListener('click', onDocumentClick); 
       <Transition name="fade">
         <div v-if="menuOpen" class="fixed inset-0 z-50 bg-black/45 lg:hidden" role="dialog" aria-modal="true" aria-label="Мобильное меню" @click="menuOpen = false">
           <nav ref="mobileNav" class="h-full w-[88%] max-w-sm overflow-y-auto bg-white p-6" @click.stop>
-            <div class="mb-10 flex items-center justify-between"><b class="text-lg">OFFICEPEAK</b><button type="button" class="icon-button" aria-label="Закрыть меню" @click="menuOpen = false"><X class="h-5 w-5" /></button></div>
+            <div class="mb-10 flex items-center justify-between"><b class="text-lg tracking-[-.06em]">OFFICE<span class="font-light">PEAK</span> <span class="font-light">|</span> ОФИС<span class="font-light">ПИК</span></b><button type="button" class="icon-button" aria-label="Закрыть меню" @click="menuOpen = false"><X class="h-5 w-5" /></button></div>
             <div class="flex flex-col gap-5 text-xl font-light">
               <NuxtLink to="/">Главная</NuxtLink><NuxtLink to="/catalog">Каталог</NuxtLink><NuxtLink to="/custom-furniture">Мебель на заказ</NuxtLink><NuxtLink to="/design-project">Дизайн-проект</NuxtLink><NuxtLink to="/delivery">Доставка</NuxtLink><NuxtLink to="/contacts">Контакты</NuxtLink>
             </div>

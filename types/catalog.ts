@@ -28,6 +28,7 @@ export interface ProductVariant {
   oldPrice?: number
   availability: Availability
   stockQuantity?: number
+  productionDays?: number
   imageIndex: number
 }
 
@@ -104,6 +105,33 @@ export interface ResolvedCartItem extends CartLine {
 export interface CatalogSnapshot {
   categories: Category[]
   collections: Collection[]
+  products: Product[]
+}
+
+export type CatalogOrigin = 'demo' | 'unitex' | 'unitex-last-good' | 'riva' | 'riva-last-good' | 'combined'
+
+export interface CatalogApiResponse {
+  source: CatalogOrigin
+  catalog: CatalogSnapshot
+}
+
+export interface ProductListFacets {
+  priceFloor: number
+  priceCeil: number
+  colors: ColorOption[]
+}
+
+export interface ProductListResponse {
+  items: Product[]
+  total: number
+  limit: number
+  offset: number
+  hasMore: boolean
+  facets: ProductListFacets
+}
+
+export interface HomeCatalogResponse {
+  featuredCollections: Collection[]
   products: Product[]
 }
 

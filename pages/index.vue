@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import { ArrowRight, Blocks, Box, BriefcaseBusiness, DraftingCompass, Handshake, Landmark, Layers3, Move3d, ShieldCheck } from 'lucide-vue-next'
-import { categories, collections, products } from '~/data/catalog'
 import { demoMedia } from '~/data/demoMedia'
+import type { HomeCatalogResponse } from '~/types/catalog'
 
 const { open: openLead } = useLeadModal()
-const featuredCollections = collections.filter(item => item.isFeatured).slice(0, 4)
-const featuredProducts = products.filter(item => item.isRecommended || item.isNew).slice(0, 4)
+const { catalog } = await useCatalog()
+const categories = computed(() => catalog.value.categories)
+const requestFetch = useRequestFetch()
+const { data: home } = await useAsyncData<HomeCatalogResponse>('catalog-home', () => requestFetch<HomeCatalogResponse>('/api/catalog/home'))
+const featuredCollections = computed(() => home.value?.featuredCollections ?? [])
+const featuredProducts = computed(() => home.value?.products ?? [])
 const services = [
   { title: 'Дизайн-проект', to: '/design-project', icon: DraftingCompass },
   { title: 'Оплата', to: '/payment', icon: ShieldCheck },

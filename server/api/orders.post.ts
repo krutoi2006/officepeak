@@ -15,6 +15,7 @@ export default defineEventHandler(async (event) => {
   if (name.length < 2 || name.length > 120) throw createError({ statusCode: 422, message: 'Укажите ФИО.' })
   const phoneDigits = phone.replace(/\D/g, '')
   if (phoneDigits.length < 10 || phoneDigits.length > 15 || phone.length > 40) throw createError({ statusCode: 422, message: 'Укажите телефон полностью.' })
+  if (body.privacyAccepted !== true) throw createError({ statusCode: 422, message: 'Необходимо принять политику конфиденциальности.' })
   if (body.consent !== true) throw createError({ statusCode: 422, message: 'Необходимо согласие на обработку данных.' })
   if (!Array.isArray(body.lines) || !body.lines.length || body.lines.length > 100) throw createError({ statusCode: 422, message: 'Состав заказа отсутствует или некорректен.' })
 
@@ -28,11 +29,12 @@ export default defineEventHandler(async (event) => {
       || !isOrderablePrice(variant.price) || !['in-stock', 'on-order'].includes(variant.availability)) {
       throw createError({ statusCode: 422, message: 'Одна из позиций заказа больше недоступна или требует уточнения цены.' })
     }
-    return { productId: product.id, productName: product.name, variantId: variant.id, article: variant.article, quantity, unitPrice: variant.price, lineTotal: variant.price * quantity }
+    return { productId: product.id, productName: product.name, variantId: variant.id, article: variant.article, color: variant.color.name, dimensions: variant.dimensions.label, quantity, unitPrice: variant.price, lineTotal: variant.price * quantity }
   })
 
   const requestId = `OP-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${Math.random().toString(36).slice(2, 10).toUpperCase()}`
-  const payload = { requestId, name, phone, lines, total: lines.reduce((sum, line) => sum + line.lineTotal, 0), createdAt: new Date().toISOString() }
+  const createdAt = new Date().toISOString()
+  const payload = { requestId, name, phone, lines, total: lines.reduce((sum, line) => sum + line.lineTotal, 0), privacyAccepted: true, personalDataConsent: true, createdAt }
 
   try {
     const delivery = await deliverSubmission(event, 'order', payload)

@@ -8,7 +8,7 @@ const sending = ref(false)
 const submitted = ref(false)
 const result = ref<{ success: boolean; text: string } | null>(null)
 const errors = reactive<Record<string, string>>({})
-const form = reactive({ name: '', phone: '', consent: false, website: '' })
+const form = reactive({ name: '', phone: '', privacyAccepted: false, consent: false, website: '' })
 let opener: HTMLElement | null = null
 
 const definitions: Record<LeadFormType, { title: string; intro: string }> = {
@@ -21,7 +21,7 @@ const definitions: Record<LeadFormType, { title: string; intro: string }> = {
 const definition = computed(() => definitions[type.value])
 
 const reset = () => {
-  Object.assign(form, { name: '', phone: '', consent: false, website: '' })
+  Object.assign(form, { name: '', phone: '', privacyAccepted: false, consent: false, website: '' })
   result.value = null
   submitted.value = false
   Object.keys(errors).forEach(key => delete errors[key])
@@ -31,6 +31,7 @@ const validate = () => {
   Object.keys(errors).forEach(key => delete errors[key])
   if (form.name.trim().length < 2) errors.name = 'Укажите ФИО.'
   if (form.phone.replace(/\D/g, '').length < 10) errors.phone = 'Укажите телефон полностью.'
+  if (!form.privacyAccepted) errors.privacyAccepted = 'Необходимо принять политику конфиденциальности.'
   if (!form.consent) errors.consent = 'Необходимо согласие на обработку данных.'
   return !Object.values(errors).some(Boolean)
 }
@@ -88,7 +89,9 @@ onBeforeUnmount(() => { if (import.meta.client) document.body.style.overflow = '
             <label class="field-label">ФИО <span aria-hidden="true">*</span><input v-model="form.name" autocomplete="name" class="field-input" :aria-invalid="Boolean(errors.name)"><span v-if="errors.name" class="field-error">{{ errors.name }}</span></label>
             <label class="field-label">Телефон <span aria-hidden="true">*</span><input v-model="form.phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="+7 999 000-00-00" class="field-input" :aria-invalid="Boolean(errors.phone)"><span v-if="errors.phone" class="field-error">{{ errors.phone }}</span></label>
             <label class="sr-only" aria-hidden="true">Сайт<input v-model="form.website" tabindex="-1" autocomplete="off"></label>
-            <label class="flex items-start gap-3 text-sm leading-5 sm:col-span-2"><input v-model="form.consent" type="checkbox" class="mt-1 h-4 w-4 accent-accent"><span>Я согласен на <NuxtLink to="/personal-data-consent" class="underline">обработку персональных данных</NuxtLink>.</span></label>
+            <label class="flex items-start gap-3 text-sm leading-5 sm:col-span-2"><input v-model="form.privacyAccepted" type="checkbox" class="mt-1 h-4 w-4 accent-accent"><span>Я принимаю <NuxtLink to="/privacy" target="_blank" rel="noopener noreferrer" class="underline">политику конфиденциальности и обработки персональных данных</NuxtLink>.</span></label>
+            <span v-if="errors.privacyAccepted" class="field-error sm:col-span-2">{{ errors.privacyAccepted }}</span>
+            <label class="flex items-start gap-3 text-sm leading-5 sm:col-span-2"><input v-model="form.consent" type="checkbox" class="mt-1 h-4 w-4 accent-accent"><span>Я даю <NuxtLink to="/personal-data-consent" target="_blank" rel="noopener noreferrer" class="underline">согласие на обработку персональных данных</NuxtLink>.</span></label>
             <span v-if="errors.consent" class="field-error sm:col-span-2">{{ errors.consent }}</span>
             <div class="sm:col-span-2"><button type="submit" class="btn-primary min-w-48" :disabled="sending || submitted"><Loader2 v-if="sending" class="h-4 w-4 animate-spin" />{{ sending ? 'Отправляем…' : submitted ? 'Заявка отправлена' : 'Отправить' }}</button></div>
           </form>

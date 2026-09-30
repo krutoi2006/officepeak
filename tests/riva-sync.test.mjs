@@ -79,7 +79,7 @@ test('streams feeds, removes duplicate offers and publishes a valid Riva snapsho
   assert.match(meta.checksum, /^[a-f0-9]{64}$/)
 })
 
-test('prioritizes primary variant photos over extra angles within the image limit', async () => {
+test('keeps primary variant photos and a separate allowance for group photos', async () => {
   const workspace = await makeWorkspace([1, 2], 2)
   const result = await syncRivaCatalog({
     configPath: workspace.configPath,
@@ -92,8 +92,32 @@ test('prioritizes primary variant photos over extra angles within the image limi
   assert.deepEqual(product.images.map(image => image.src), [
     'https://static.riva.ru/upload/9001.jpg',
     'https://static.riva.ru/upload/9002.jpg',
+    'https://static.riva.ru/upload/9001-angle.jpg',
   ])
   assert.deepEqual(product.variants.map(variant => variant.imageIndex), [0, 1])
+})
+
+test('uses a supplier description from a later variant in the same product group', async () => {
+  const workspace = await makeWorkspace([1, 2])
+  const fetchImpl = async (url) => {
+    if (url.pathname === '/api/') {
+      return new Response(null, { status: 302, headers: { location: `/feeds/${url.searchParams.get('type')}.xml` } })
+    }
+    const type = Number(url.pathname.match(/(\d+)\.xml$/)?.[1])
+    const body = xml({ second: type === 2 })
+      .replace('<description><![CDATA[<p>Рабочий стол.</p>]]></description>', '')
+      .replace('<param name="Артикул">N-2</param>', '<description><![CDATA[<p>Полное описание товарной группы.</p>]]></description><param name="Артикул">N-2</param>')
+    return new Response(body, { status: 200, headers: { 'content-type': 'text/xml' } })
+  }
+  const result = await syncRivaCatalog({
+    dryRun: true,
+    configPath: workspace.configPath,
+    storageDir: workspace.directory,
+    env: { RIVA_API_ID: 'test-id', RIVA_API_BASE_URL: 'http://127.0.0.1/api/', RIVA_SYNC_TIMEOUT_MS: '30000' },
+    fetchImpl,
+    sleepFn: async () => {},
+  })
+  assert.equal(result.snapshot.products[0].description, 'Полное описание товарной группы.')
 })
 
 test('dry-run validates all data without publishing files', async () => {

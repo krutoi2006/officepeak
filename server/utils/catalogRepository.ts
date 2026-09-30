@@ -1,6 +1,8 @@
 import { readFile, stat } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { demoCatalog } from '~/data/demoCatalog'
+import rivaCollectionDescriptions from '~/config/riva-collection-descriptions.json'
+import rivaSyncConfig from '~/config/riva-sync.json'
 import { assertCatalogSnapshot, mergeCatalogSnapshots, normalizeCatalog } from '~/services/catalogAdapter'
 import type { CatalogOrigin, CatalogSnapshot, CatalogSource } from '~/types/catalog'
 
@@ -31,6 +33,22 @@ const warningSignatures = new Set<string>()
 const fallbackSnapshot = normalizeCatalog(demoCatalog)
 let combinedCache: { signature: string, snapshot: CatalogSnapshot } | undefined
 
+const applyRivaDescriptions = (snapshot: CatalogSnapshot): CatalogSnapshot => {
+  const descriptions = rivaCollectionDescriptions as Record<string, { description: string }>
+  const excludedCollectionIds = new Set(rivaSyncConfig.excludedCollectionIds ?? [])
+  return {
+    ...snapshot,
+    collections: snapshot.collections.filter(collection => !excludedCollectionIds.has(collection.id)).map(collection => ({
+      ...collection,
+      description: descriptions[collection.id]?.description || collection.description,
+    })),
+    products: snapshot.products.filter(product => !product.collectionId || !excludedCollectionIds.has(product.collectionId)).map(product => {
+      const description = product.collectionId ? descriptions[product.collectionId]?.description : undefined
+      return description && product.description === `${product.name} от Riva.` ? { ...product, description } : product
+    }),
+  }
+}
+
 export const getCatalogStorageDir = () => resolve(process.env.UNITEX_CATALOG_STORAGE_DIR || resolve(process.cwd(), 'data', 'generated'))
 export const getRivaCatalogStorageDir = () => resolve(process.env.RIVA_CATALOG_STORAGE_DIR || getCatalogStorageDir())
 
@@ -41,7 +59,8 @@ const readSnapshot = async (path: string, source: CatalogOrigin): Promise<Cached
   if (cached?.signature === signature) return cached
   const value: unknown = JSON.parse(await readFile(path, 'utf8'))
   assertCatalogSnapshot(value)
-  const result = { path, signature, source, snapshot: normalizeCatalog(value) }
+  const normalized = normalizeCatalog(value)
+  const result = { path, signature, source, snapshot: source.startsWith('riva') ? applyRivaDescriptions(normalized) : normalized }
   fileCache.set(path, result)
   return result
 }

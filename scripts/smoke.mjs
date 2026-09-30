@@ -5,7 +5,17 @@ const catalogResponse = await fetch(`${baseUrl}/api/catalog`)
 const catalogBody = catalogResponse.ok ? await catalogResponse.json() : null
 const expectedSource = process.env.OFFICEPEAK_EXPECT_CATALOG_SOURCE || 'demo'
 if (!catalogBody?.catalog || catalogBody.source !== expectedSource) failures.push(`/api/catalog: expected source ${expectedSource}, got ${catalogBody?.source ?? catalogResponse.status}`)
-const snapshot = catalogBody?.catalog ?? { categories: [], collections: [], products: [] }
+const [collectionsResponse, productsResponse] = await Promise.all([
+  fetch(`${baseUrl}/api/catalog/collections`),
+  fetch(`${baseUrl}/api/catalog/product-list?full=1&limit=100`),
+])
+const collections = collectionsResponse.ok ? await collectionsResponse.json() : []
+const productList = productsResponse.ok ? await productsResponse.json() : { items: [] }
+const snapshot = {
+  categories: catalogBody?.catalog?.categories ?? [],
+  collections: Array.isArray(collections) ? collections : [],
+  products: Array.isArray(productList.items) ? productList.items : [],
+}
 const sampleProduct = snapshot.products.find(product => product.variants.some(variant => variant.price > 0))
 const sampleVariant = sampleProduct?.variants.find(variant => variant.price > 0)
 if (!sampleProduct || !sampleVariant) failures.push('/api/catalog: no orderable sample product found')
@@ -52,7 +62,7 @@ if (sampleProduct && sampleVariant) {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({
-      name: 'Тест QA', phone: '+70000000000', consent: true, website: '',
+      name: 'Тест QA', phone: '+70000000000', privacyAccepted: true, consent: true, website: '',
       lines: [{ productId: sampleProduct.id, variantId: sampleVariant.id, quantity: 1 }],
     }),
   })
@@ -65,12 +75,13 @@ for (const type of ['callback', 'design', 'message', 'manager', 'tender']) {
   leadForm.set('type', type)
   leadForm.set('name', 'Тест QA')
   leadForm.set('phone', '+70000000000')
+  leadForm.set('privacyAccepted', 'true')
   leadForm.set('consent', 'true')
   leadForm.set('website', '')
   const validLead = await fetch(`${baseUrl}/api/leads`, {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ ...Object.fromEntries(leadForm), consent: true }),
+    body: JSON.stringify({ ...Object.fromEntries(leadForm), privacyAccepted: true, consent: true }),
   })
   const leadBody = await validLead.json()
   if (validLead.status !== 503) failures.push(`/api/leads ${type} without SMTP: expected 503, got ${validLead.status}: ${JSON.stringify(leadBody)}`)

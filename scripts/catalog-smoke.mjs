@@ -103,7 +103,7 @@ try {
   if (collectionResult.body?.name !== 'У.РУС') failures.push('/api/catalog/collections/[slug] failed')
 
   const orderBody = variantId => ({
-    name: 'Тест QA', phone: '+70000000000', consent: true, website: '',
+    name: 'Тест QA', phone: '+70000000000', privacyAccepted: true, consent: true, website: '',
     lines: [{ productId: 'unitex-product-500', variantId, quantity: 3 }],
   })
   const onOrder = await requestJson('/api/orders', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(orderBody('unitex-variant-101')) })

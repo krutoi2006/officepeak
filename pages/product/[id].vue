@@ -12,6 +12,13 @@ const { data: productData } = await useAsyncData<Product>(
 )
 const product = productData.value
 if (!product) throw createError({ statusCode: 404, statusMessage: 'Товар не найден' })
+delete product.specifications['Производитель']
+delete product.specifications['Страница поставщика']
+const visibleFeatures = computed(() => product.features.filter(item => !(
+  /количество\s+на\s+складе/iu.test(item)
+  || /^\d+\s+склад(?:\s|:|$)/iu.test(item)
+  || /^для\s+продажи(?:\s|\(|:|$)/iu.test(item)
+)))
 const category = categoryById(catalog.value, product.categoryId)
 const { data: collectionData } = await useAsyncData<Collection | null>(
   `product-collection-${product.collectionId ?? 'none'}`,
@@ -83,7 +90,7 @@ useHead({ script: [{ type: 'application/ld+json', innerHTML: JSON.stringify({ '@
         </div>
       </div>
     </section>
-    <section class="bg-surface section-space"><div class="container-page grid gap-12 lg:grid-cols-2"><div><h2 class="mb-6 text-4xl font-light">Особенности</h2><ul v-if="product.features.length" class="space-y-3 text-sm"><li v-for="item in product.features" :key="item" class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />{{ item }}</li></ul><p v-else class="text-sm text-secondary">Дополнительные особенности уточняйте у менеджера.</p></div><div><h2 class="mb-5 text-2xl font-light">Характеристики</h2><dl class="border-t border-border"><div v-for="(value, key) in product.specifications" :key="key" class="grid grid-cols-2 gap-4 border-b border-border py-4 text-sm"><dt class="text-secondary">{{ key }}</dt><dd class="font-medium">{{ value }}</dd></div></dl><h3 class="mb-3 mt-8 text-xl font-medium">Материалы</h3><p class="text-sm leading-6 text-secondary">{{ product.materials.join(' · ') }}</p><h3 class="mb-3 mt-8 text-xl font-medium">Гарантия</h3><p class="text-sm leading-6 text-secondary">{{ product.warranty }}</p></div></div></section>
+    <section class="bg-surface section-space"><div class="container-page grid gap-12 lg:grid-cols-2"><div><h2 class="mb-6 text-4xl font-light">Особенности</h2><ul v-if="visibleFeatures.length" class="space-y-3 text-sm"><li v-for="item in visibleFeatures" :key="item" class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />{{ item }}</li></ul><p v-else class="text-sm text-secondary">Дополнительные особенности уточняйте у менеджера.</p></div><div><h2 class="mb-5 text-2xl font-light">Характеристики</h2><dl class="border-t border-border"><div v-for="(value, key) in product.specifications" :key="key" class="grid grid-cols-2 gap-4 border-b border-border py-4 text-sm"><dt class="text-secondary">{{ key }}</dt><dd class="font-medium">{{ value }}</dd></div></dl><h3 class="mb-3 mt-8 text-xl font-medium">Материалы</h3><p class="text-sm leading-6 text-secondary">{{ product.materials.join(' · ') }}</p><h3 class="mb-3 mt-8 text-xl font-medium">Гарантия</h3><p class="text-sm leading-6 text-secondary">{{ product.warranty }}</p></div></div></section>
     <section class="container-page section-space"><div class="grid gap-px bg-border md:grid-cols-3"><article v-for="item in [{ title: 'Доставка', text: 'Рассчитаем для вашего адреса.', to: '/delivery' }, { title: 'Оплата', text: 'Укажем способ оплаты в заказе.', to: '/payment' }, { title: 'Сборка', text: 'Соберём мебель в вашем офисе.', to: '/assembly' }]" :key="item.to" class="bg-white p-7"><h2 class="mb-3 text-2xl font-light">{{ item.title }}</h2><p class="mb-5 text-sm leading-6 text-secondary">{{ item.text }}</p><NuxtLink :to="item.to" class="text-sm font-medium underline">Подробнее</NuxtLink></article></div></section>
     <section v-if="related.length" class="bg-surface section-space"><div class="container-page"><div class="mb-9"><h2 class="text-4xl font-light">Похожие товары</h2></div><div class="grid gap-x-4 gap-y-12 sm:grid-cols-2 lg:grid-cols-4"><ProductCard v-for="item in related" :key="item.id" :product="item" /></div></div></section>
     <Teleport to="body"><div v-if="zoomOpen" class="fixed inset-0 z-[80] flex items-center justify-center bg-black/90 p-4" role="dialog" aria-modal="true" aria-label="Увеличенное изображение" @click.self="zoomOpen = false"><button type="button" class="icon-button absolute right-4 top-4 border-white/30 text-white" aria-label="Закрыть" @click="zoomOpen = false"><X class="h-5 w-5" /></button><img :src="image.src" :alt="image.alt" class="max-h-[90vh] max-w-[95vw] object-contain"></div></Teleport>

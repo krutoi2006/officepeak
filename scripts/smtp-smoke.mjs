@@ -2,6 +2,10 @@ import { spawn } from 'node:child_process'
 import { createServer } from 'node:net'
 
 const messages = []
+const decodeMimeText = message => message.replace(
+  /Content-Transfer-Encoding: base64\s*\n\n([A-Za-z0-9+/=\n]+)/g,
+  (_match, encoded) => Buffer.from(encoded.replace(/\s/g, ''), 'base64').toString('utf8'),
+)
 const smtpServer = createServer((socket) => {
   socket.setEncoding('utf8')
   socket.write('220 localhost ESMTP\r\n')
@@ -77,16 +81,16 @@ try {
   }
   if (!ready) throw new Error(`Production server did not start.\n${appOutput}`)
 
-  const catalogResponse = await fetch(`${baseUrl}/api/catalog`)
+  const catalogResponse = await fetch(`${baseUrl}/api/catalog/product-list?full=1&limit=100`)
   const catalogBody = await catalogResponse.json()
-  const sampleProduct = catalogBody.catalog?.products?.find(product => product.variants.some(variant => variant.price > 0))
+  const sampleProduct = catalogBody.items?.find(product => product.variants.some(variant => variant.price > 0))
   const sampleVariant = sampleProduct?.variants.find(variant => variant.price > 0)
   if (!sampleProduct || !sampleVariant) throw new Error('Catalog does not contain an orderable SMTP test product')
 
   const lead = await fetch(`${baseUrl}/api/leads`, {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ type: 'callback', name: 'Тест SMTP', phone: '+70000000000', consent: true, website: '' }),
+    body: JSON.stringify({ type: 'callback', name: 'Тест SMTP', phone: '+70000000000', privacyAccepted: true, consent: true, website: '' }),
   })
   if (lead.status !== 201) throw new Error(`Lead SMTP request returned ${lead.status}: ${await lead.text()}`)
 
@@ -96,6 +100,7 @@ try {
     body: JSON.stringify({
       name: 'Тест SMTP',
       phone: '+70000000000',
+      privacyAccepted: true,
       consent: true,
       website: '',
       lines: [{ productId: sampleProduct.id, variantId: sampleVariant.id, quantity: 1 }],
@@ -103,8 +108,11 @@ try {
   })
   if (order.status !== 201) throw new Error(`Order SMTP request returned ${order.status}: ${await order.text()}`)
   if (messages.length !== 2) throw new Error(`Expected two SMTP messages, received ${messages.length}`)
-  if (!messages.every(messageText => messageText.includes('+70000000000'))) throw new Error('Phone is missing from an SMTP message')
-  if (!messages[1].includes(sampleVariant.article)) throw new Error('Order details are missing from the SMTP message')
+  const decodedMessages = messages.map(decodeMimeText)
+  if (!decodedMessages.every(messageText => messageText.includes('+70000000000'))) throw new Error('Phone is missing from an SMTP message')
+  const orderMessage = decodedMessages.find(messageText => messageText.includes(sampleVariant.article))
+  if (!orderMessage) throw new Error('Order details are missing from the SMTP message')
+  if (!orderMessage.includes(sampleVariant.color.name) || !orderMessage.includes(sampleVariant.dimensions.label)) throw new Error('Selected product variant is missing from the SMTP message')
 
   console.log('SMTP smoke passed: lead and order emails were accepted by the local test server.')
 } finally {

@@ -11,6 +11,7 @@ const META_FILE = 'rivaCatalog.meta.json'
 const LOCK_FILE = 'riva-sync.lock'
 const moduleDir = dirname(fileURLToPath(import.meta.url))
 const defaultConfigPath = resolve(moduleDir, '..', '..', 'config', 'riva-sync.json')
+const defaultDescriptionsPath = resolve(moduleDir, '..', '..', 'config', 'riva-collection-descriptions.json')
 
 const categoryDetails = {
   'executive-offices': ['Кабинеты руководителя', 'Кабинеты и мебель для руководителей.'],
@@ -107,8 +108,13 @@ const normalizeConfig = (value) => {
   if (!Object.keys(categoryByRootId).length) throw new Error('Не задано сопоставление корневых категорий Riva.')
   const maxImagesPerProduct = Math.floor(toNumber(value.maxImagesPerProduct) ?? 12)
   if (maxImagesPerProduct < 1 || maxImagesPerProduct > 50) throw new Error('maxImagesPerProduct должен быть от 1 до 50.')
-  return { feedTypes, categoryByRootId, maxImagesPerProduct }
+  const excludedCollectionIds = new Set((Array.isArray(value.excludedCollectionIds) ? value.excludedCollectionIds : []).map(asId).filter(Boolean))
+  return { feedTypes, categoryByRootId, excludedCollectionIds, maxImagesPerProduct }
 }
+
+const normalizeCollectionDescriptions = (value) => Object.fromEntries(Object.entries(value ?? {})
+  .map(([collectionId, entry]) => [asId(collectionId), htmlToText(entry?.description)])
+  .filter(([collectionId, description]) => collectionId && description))
 
 const isAllowedRedirect = (target, base) => {
   const localHosts = new Set(['localhost', '127.0.0.1'])
@@ -332,6 +338,7 @@ const createAggregator = (config) => {
   const categories = new Map()
   const collections = new Map()
   const products = new Map()
+  const sourceDescriptionLengths = new Map()
   const seenOffers = new Set()
   const warnings = []
   let duplicateOfferCount = 0
@@ -378,13 +385,14 @@ const createAggregator = (config) => {
     categories.set(targetCategoryId, category)
 
     const collectionId = `riva-collection-${collectionNode.id}`
+    if (config.excludedCollectionIds.has(collectionId)) return
     const collectionName = collectionNode.name || root.name
     const collection = collections.get(collectionId) ?? {
       id: collectionId,
       slug: collectionId,
       name: collectionName,
       categoryId: targetCategoryId,
-      description: `${collectionName} от Riva.`,
+      description: config.collectionDescriptions[collectionId] || `${collectionName} от Riva.`,
       image: { src: '', alt: collectionName },
       images: [],
       colors: [],
@@ -406,6 +414,7 @@ const createAggregator = (config) => {
 
     const sourceGroupId = asId(offer.groupId) || offerId
     const productId = `riva-product-${sourceGroupId}`
+    const sourceDescription = htmlToText(offer.description)
     const product = products.get(productId) ?? {
       id: productId,
       slug: productId,
@@ -413,7 +422,7 @@ const createAggregator = (config) => {
       categoryId: targetCategoryId,
       collectionId,
       groupId,
-      description: htmlToText(offer.description) || `${cleanProductName(offer)} от Riva.`,
+      description: sourceDescription || config.collectionDescriptions[collectionId] || `${cleanProductName(offer)} от Riva.`,
       _images: new Set(),
       variants: [],
       specifications: {
@@ -425,6 +434,13 @@ const createAggregator = (config) => {
       features: offerFeatures(offer.params),
       isNew: false,
       isRecommended: false,
+    }
+    // Variants inside one Riva group are not equally complete: the first one
+    // can have no description while a later color/size contains the supplier
+    // text. Keep the most informative description found for the whole group.
+    if (sourceDescription.length > (sourceDescriptionLengths.get(productId) ?? 0)) {
+      product.description = sourceDescription
+      sourceDescriptionLengths.set(productId, sourceDescription.length)
     }
     for (const src of images) if (product._images.size < config.maxImagesPerProduct) product._images.add(src)
     if (variant.color.material) product.materials.add(variant.color.material)
@@ -439,8 +455,13 @@ const createAggregator = (config) => {
       // Otherwise the extra angles of the first color can fill the whole limit
       // and later color variants incorrectly fall back to image zero.
       const variantImageUrls = unique(product.variants.map(variant => variant._imageUrl).filter(Boolean))
-      const imageLimit = Math.max(config.maxImagesPerProduct, variantImageUrls.length)
-      const imageUrls = unique([...variantImageUrls, ...product._images]).slice(0, imageLimit)
+      const variantImageSet = new Set(variantImageUrls)
+      const galleryImageUrls = [...product._images]
+        .filter(src => !variantImageSet.has(src))
+        .slice(0, config.maxImagesPerProduct)
+      // Every variant keeps its own primary photo. Group/interior photos use a
+      // separate allowance so a product with many colors cannot crowd them out.
+      const imageUrls = [...variantImageUrls, ...galleryImageUrls]
       if (!imageUrls.length) {
         warnings.push(`Товар Riva ${product.id} пропущен: нет безопасного изображения.`)
         continue
@@ -603,7 +624,10 @@ export const syncRivaCatalog = async ({
   const timeout = setTimeout(() => controller.abort(), timeoutMs)
   timeout.unref?.()
   try {
-    const config = normalizeConfig(JSON.parse(await readFile(configPath, 'utf8')))
+    const config = {
+      ...normalizeConfig(JSON.parse(await readFile(configPath, 'utf8'))),
+      collectionDescriptions: normalizeCollectionDescriptions(JSON.parse(await readFile(defaultDescriptionsPath, 'utf8'))),
+    }
     const aggregator = createAggregator(config)
     const feedStats = []
     let parsedOfferCount = 0

@@ -36,6 +36,8 @@ const buildMail = (kind: SubmissionKind, payload: Record<string, unknown>) => {
     ['Номер заявки', requestId],
     ['ФИО', String(payload.name ?? '')],
     ['Телефон', String(payload.phone ?? '')],
+    ['Политика конфиденциальности', payload.privacyAccepted === true ? 'принята' : 'не принята'],
+    ['Согласие на обработку персональных данных', payload.personalDataConsent === true ? 'получено' : 'не получено'],
     ['Дата', String(payload.createdAt ?? '')],
   ]
 
@@ -47,8 +49,8 @@ const buildMail = (kind: SubmissionKind, payload: Record<string, unknown>) => {
   let orderHtml = ''
   if (kind === 'order' && Array.isArray(payload.lines)) {
     const lines = payload.lines.filter((line): line is Record<string, unknown> => Boolean(line) && typeof line === 'object' && !Array.isArray(line))
-    orderText = `\n\nСостав заказа:\n${lines.map((line, index) => `${index + 1}. ${line.productName} (${line.article}) — ${line.quantity} шт. × ${formatPrice(line.unitPrice)} = ${formatPrice(line.lineTotal)}`).join('\n')}\nИтого: ${formatPrice(payload.total)}`
-    orderHtml = `<h2>Состав заказа</h2><ol>${lines.map(line => `<li>${escapeHtml(line.productName)} (${escapeHtml(line.article)}) — ${escapeHtml(line.quantity)} шт. × ${escapeHtml(formatPrice(line.unitPrice))} = ${escapeHtml(formatPrice(line.lineTotal))}</li>`).join('')}</ol><p><strong>Итого: ${escapeHtml(formatPrice(payload.total))}</strong></p>`
+    orderText = `\n\nСостав заказа:\n${lines.map((line, index) => `${index + 1}. ${line.productName} (${line.article}) — ${line.color}, ${line.dimensions}; ${line.quantity} шт. × ${formatPrice(line.unitPrice)} = ${formatPrice(line.lineTotal)}`).join('\n')}\nИтого: ${formatPrice(payload.total)}`
+    orderHtml = `<h2>Состав заказа</h2><ol>${lines.map(line => `<li>${escapeHtml(line.productName)} (${escapeHtml(line.article)}) — ${escapeHtml(line.color)}, ${escapeHtml(line.dimensions)}; ${escapeHtml(line.quantity)} шт. × ${escapeHtml(formatPrice(line.unitPrice))} = ${escapeHtml(formatPrice(line.lineTotal))}</li>`).join('')}</ol><p><strong>Итого: ${escapeHtml(formatPrice(payload.total))}</strong></p>`
   }
 
   const title = kind === 'order' ? `Новый заказ ${requestId}` : `Новая заявка ${requestId}`

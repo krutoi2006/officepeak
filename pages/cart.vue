@@ -3,7 +3,7 @@ import { FileText, ShoppingBag, Trash2 } from 'lucide-vue-next'
 import { availabilityLabel, formatPrice } from '~/data/catalog'
 
 const { items, total, remove, setQuantity } = useShop()
-usePageSeo('Корзина', 'Корзина товаров OFFICEPEAK перед оформлением заявки или коммерческого предложения.', '/cart')
+usePageSeo('Корзина', 'Корзина товаров OFFICEPEAK перед оформлением заявки или коммерческого предложения.', '/cart', { noindex: true })
 </script>
 
 <template>
@@ -13,7 +13,7 @@ usePageSeo('Корзина', 'Корзина товаров OFFICEPEAK пере�
     <div v-if="items.length" class="grid gap-10 xl:grid-cols-[1fr_370px]">
       <div class="border-t border-border">
         <article v-for="item in items" :key="item.key" class="grid gap-5 border-b border-border py-6 sm:grid-cols-[150px_1fr]">
-          <NuxtLink :to="`/product/${item.product.slug}`"><img :src="item.product.images[item.variant.imageIndex]?.src ?? item.product.images[0]?.src" :alt="item.product.name" class="aspect-[4/3] w-full object-cover"></NuxtLink>
+          <NuxtLink :to="`/product/${item.product.slug}`"><img :src="item.product.images[item.variant.imageIndex]?.src ?? item.product.images[0]?.src" :alt="item.product.name" width="600" height="450" loading="lazy" decoding="async" class="aspect-[4/3] w-full object-cover"></NuxtLink>
           <div class="grid gap-5 md:grid-cols-[1fr_auto]"><div><NuxtLink :to="`/product/${item.product.slug}`" class="text-xl font-medium hover:text-accent">{{ item.product.name }}</NuxtLink><p class="mt-2 text-sm text-secondary">Арт. {{ item.variant.article }}</p><dl class="mt-4 grid gap-1 text-sm"><div class="flex gap-2"><dt class="text-secondary">Цвет:</dt><dd>{{ item.variant.color.name }}</dd></div><div class="flex gap-2"><dt class="text-secondary">Размер:</dt><dd>{{ item.variant.dimensions.label }}</dd></div><div class="flex gap-2"><dt class="text-secondary">Статус:</dt><dd :class="item.variant.availability === 'in-stock' ? 'text-emerald-700' : 'text-amber-700'">{{ availabilityLabel(item.variant.availability) }}</dd></div></dl></div><div class="flex flex-row items-center justify-between gap-4 md:flex-col md:items-end"><button type="button" class="inline-flex items-center gap-2 text-xs text-secondary hover:text-primary" @click="remove(item.productId, item.variantId)"><Trash2 class="h-4 w-4" /> Удалить</button><QuantityInput :model-value="item.quantity" :label="`Количество ${item.product.name}`" @update:model-value="setQuantity(item.productId, item.variantId, $event)" /><b>{{ formatPrice(item.lineTotal) }}</b></div></div>
         </article>
       </div>

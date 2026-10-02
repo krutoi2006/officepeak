@@ -76,7 +76,7 @@ onBeforeUnmount(() => { if (timer) clearInterval(timer) })
         class="relative h-full w-full shrink-0"
         :aria-hidden="index !== position"
       >
-        <img :src="slide.image" :alt="slide.alt" :loading="index <= 1 ? 'eager' : 'lazy'" class="absolute inset-0 h-full w-full object-cover">
+        <img :src="slide.image" :alt="slide.alt" width="2200" height="1238" :loading="index === 1 ? 'eager' : 'lazy'" :fetchpriority="index === 1 ? 'high' : 'auto'" decoding="async" class="absolute inset-0 h-full w-full object-cover">
         <div class="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-black/10" />
       </article>
     </div>

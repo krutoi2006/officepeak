@@ -18,6 +18,7 @@ export const demoMedia = {
   storage: unsplash('photo-1595515106969-1ce29566ff1c'),
   adjustable: unsplash('photo-1518455027359-f3f8164ba6bd'),
   metal: unsplash('photo-1538688423619-a81d3f23454b'),
+  metalCategory: 'https://riva.ru/upload/iblock/294/o09vdj56oqxnv1lgekauyjqcu1yhye7e/2652f742_8766_11ed_bbab_ac1f6bc34175_5ca2f920_0959_11ef_bc1b_ac1f6bc34175.jpg',
   project: unsplash('photo-1497366754035-f200968a6e72'),
   detail: [
     unsplash('photo-1518455027359-f3f8164ba6bd'),

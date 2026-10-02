@@ -15,6 +15,7 @@
     "test:catalog-sync": "node --test tests/unitex-sync.test.mjs tests/riva-sync.test.mjs",
     "smoke": "node scripts/smoke.mjs",
     "smoke:catalog": "node scripts/catalog-smoke.mjs",
+    "smoke:seo": "node scripts/seo-smoke.mjs",
     "smoke:smtp": "node scripts/smtp-smoke.mjs"
   },
   "dependencies": {

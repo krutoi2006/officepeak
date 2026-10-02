@@ -5,8 +5,8 @@ export const emptyCatalog = (): CatalogSnapshot => ({ categories: [], collection
 export const categoryById = (catalog: CatalogSnapshot, id: string) => catalog.categories.find(item => item.id === id)
 export const categoryBySlug = (catalog: CatalogSnapshot, slug: string) => catalog.categories.find(item => item.slug === slug)
 export const collectionById = (catalog: CatalogSnapshot, id?: string) => catalog.collections.find(item => item.id === id)
-export const collectionBySlug = (catalog: CatalogSnapshot, slug: string) => catalog.collections.find(item => item.slug === slug)
-export const productById = (catalog: CatalogSnapshot, id: string) => catalog.products.find(item => item.id === id || item.slug === id)
+export const collectionBySlug = (catalog: CatalogSnapshot, slug: string) => catalog.collections.find(item => item.slug === slug || item.legacySlug === slug)
+export const productById = (catalog: CatalogSnapshot, id: string) => catalog.products.find(item => item.id === id || item.slug === id || item.legacySlug === id)
 
 export const formatPrice = (value: number) =>
   value > 0

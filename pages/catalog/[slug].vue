@@ -24,7 +24,7 @@ const { data: productData, status: productStatus } = await useAsyncData<ProductL
 const categoryCollections = computed(() => collectionData.value ?? [])
 const categoryProducts = computed(() => productData.value?.items ?? [])
 const hasMoreProducts = computed(() => productData.value?.hasMore ?? false)
-usePageSeo(category.name, category.description, `/catalog/${category.slug}`)
+usePageSeo(category.name, category.description, `/catalog/${category.slug}`, { image: category.image.src })
 </script>
 
 <template>

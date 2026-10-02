@@ -22,7 +22,7 @@ const categories = computed(() => catalog.value.categories)
       </div>
       <div><h2 class="footer-heading">Каталог</h2><div class="footer-links"><NuxtLink v-for="category in categories.slice(0, 6)" :key="category.id" :to="`/catalog/${category.slug}`">{{ category.name }}</NuxtLink><NuxtLink to="/catalog" class="text-white">Весь каталог</NuxtLink></div></div>
       <div><h2 class="footer-heading">Услуги</h2><div class="footer-links"><NuxtLink v-for="service in services" :key="service[1]" :to="service[1]">{{ service[0] }}</NuxtLink><NuxtLink to="/custom-furniture">Мебель на заказ</NuxtLink><NuxtLink to="/contacts">Контакты</NuxtLink></div></div>
-      <div><h2 class="footer-heading">Клиентам</h2><div class="footer-links"><NuxtLink v-for="item in clients" :key="item[1]" :to="item[1]">{{ item[0] }}</NuxtLink><NuxtLink to="/privacy">Политика конфиденциальности</NuxtLink><NuxtLink to="/personal-data-consent">Согласие на обработку данных</NuxtLink></div></div>
+      <div><h2 class="footer-heading">Клиентам</h2><div class="footer-links"><NuxtLink v-for="item in clients" :key="item[1]" :to="item[1]">{{ item[0] }}</NuxtLink><NuxtLink to="/privacy">Политика конфиденциальности</NuxtLink><NuxtLink to="/cookie-policy">Политика использования cookie</NuxtLink><NuxtLink to="/personal-data-consent">Согласие на обработку данных</NuxtLink></div></div>
     </div>
     <div class="container-page mt-14 border-t border-white/15 pt-7">
       <p class="max-w-5xl text-xs leading-5 text-white/45">{{ publicOfferDisclaimer }}</p>

@@ -1,4 +1,5 @@
 import type { CatalogImage, Collection, Product, ProductVariant } from '~/types/catalog'
+import { truncateSeoText } from '~/utils/seo'
 
 const CARD_VARIANT_LIMIT = 12
 
@@ -44,11 +45,17 @@ export const toProductCard = (product: Product): Product => {
     ...product,
     images: images.length ? images : product.images.slice(0, 1),
     variants,
+    description: '',
+    specifications: {},
+    materials: [],
+    warranty: '',
+    features: [],
   }
 }
 
 export const toCollectionCard = (collection: Collection): Collection => ({
   ...collection,
+  description: truncateSeoText(collection.description, 240),
   images: collection.images.slice(0, 1),
   colors: collection.colors.slice(0, 9),
   groups: [],

@@ -19,6 +19,7 @@ const content: Record<string, InfoPage> = {
   returns: { title: 'Возврат', lead: 'Условия возврата зависят от товара.', sections: [{ title: 'Мебель на заказ', text: 'Для мебели по вашим размерам действуют отдельные правила.' }, { title: 'Как обратиться', text: 'Позвоните или напишите нам.' }], legal: true },
   contacts: { title: 'Контакты', lead: 'Позвоните или напишите нам.', sections: [{ title: siteConfig.phone, text: 'Телефон для вопросов и заказов.' }, { title: siteConfig.email, text: 'Почта для заявок и файлов.' }], cta: 'message' },
   privacy: legalPages.privacy,
+  'cookie-policy': legalPages['cookie-policy'],
   'personal-data-consent': legalPages['personal-data-consent'],
   services: { title: 'Услуги', lead: 'Поможем с проектом, доставкой и сборкой мебели.', sections: [{ title: 'Наши услуги', text: 'Выберите нужную услугу.', items: ['Дизайн-проект', 'Оплата', 'Доставка', 'Подъём', 'Сборка', 'Гарантия', 'Возврат'] }] },
 }

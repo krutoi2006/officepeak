@@ -2,11 +2,51 @@ import type { CartLine, Product, ProductListResponse, ProductVariant, ResolvedCa
 import { isOrderablePrice } from '~/data/catalog'
 
 const clampQuantity = (quantity: number) => Math.max(1, Math.min(999, Math.round(quantity || 1)))
+const CART_COOKIE_MAX_AGE = 60 * 60 * 24 * 90
+const FAVORITES_COOKIE_MAX_AGE = 60 * 60 * 24 * 365
+
+const normalizeCart = (value: unknown): CartLine[] => {
+  if (!Array.isArray(value)) return []
+
+  const uniqueLines = new Map<string, CartLine>()
+  for (const rawLine of value) {
+    if (!rawLine || typeof rawLine !== 'object' || Array.isArray(rawLine)) continue
+    const line = rawLine as Record<string, unknown>
+    const productId = typeof line.productId === 'string' ? line.productId.trim() : ''
+    const variantId = typeof line.variantId === 'string' ? line.variantId.trim() : ''
+    if (!productId || !variantId) continue
+    const quantity = clampQuantity(Number(line.quantity))
+    uniqueLines.set(`${productId}:${variantId}`, { productId, variantId, quantity })
+  }
+  return [...uniqueLines.values()]
+}
+
+const normalizeFavorites = (value: unknown): string[] => Array.isArray(value)
+  ? [...new Set(value.filter((id): id is string => typeof id === 'string').map(id => id.trim()).filter(Boolean))]
+  : []
 
 export const useShop = () => {
   const requestFetch = useCatalogRequest()
-  const cart = useCookie<CartLine[]>('officepeak-cart', { default: () => [], maxAge: 60 * 60 * 24 * 90, sameSite: 'lax', watch: true })
-  const favorites = useCookie<string[]>('officepeak-favorites', { default: () => [], maxAge: 60 * 60 * 24 * 365, sameSite: 'lax', watch: true })
+  const cart = useCookie<CartLine[]>('officepeak-cart', {
+    default: () => [],
+    maxAge: CART_COOKIE_MAX_AGE,
+    path: '/',
+    sameSite: 'lax',
+    secure: import.meta.env.PROD,
+    watch: true,
+  })
+  const favorites = useCookie<string[]>('officepeak-favorites', {
+    default: () => [],
+    maxAge: FAVORITES_COOKIE_MAX_AGE,
+    path: '/',
+    sameSite: 'lax',
+    secure: import.meta.env.PROD,
+    watch: true,
+  })
+  const normalizedCart = normalizeCart(cart.value)
+  const normalizedFavorites = normalizeFavorites(favorites.value)
+  if (JSON.stringify(cart.value) !== JSON.stringify(normalizedCart)) cart.value = normalizedCart
+  if (JSON.stringify(favorites.value) !== JSON.stringify(normalizedFavorites)) favorites.value = normalizedFavorites
   const cartOpen = useState('cartOpen', () => false)
   const menuOpen = useState('menuOpen', () => false)
   const productCache = useState<Record<string, Product>>('shop-product-cache', () => ({}))

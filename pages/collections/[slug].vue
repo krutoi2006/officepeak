@@ -2,6 +2,7 @@
 import { ArrowLeft, ArrowRight, ChevronDown } from 'lucide-vue-next'
 import { categoryById } from '~/data/catalog'
 import type { Collection, ProductListResponse } from '~/types/catalog'
+import { collectionSeoDescription } from '~/utils/seo'
 
 const route = useRoute()
 const { catalog } = await useCatalog()
@@ -12,6 +13,9 @@ const { data: collectionData } = await useAsyncData<Collection>(
 )
 const collection = collectionData.value
 if (!collection) throw createError({ statusCode: 404, statusMessage: 'Коллекция не найдена' })
+if (String(route.params.slug) !== collection.slug) {
+  await navigateTo(`/collections/${collection.slug}`, { redirectCode: 301, replace: true })
+}
 const category = categoryById(catalog.value, collection.categoryId)
 const activeGroup = ref('')
 const page = ref(1)
@@ -37,7 +41,7 @@ const hasMoreProducts = computed(() => productData.value?.hasMore ?? false)
 const related = computed(() => relatedData.value ?? [])
 const visibleGroups = computed(() => collection.groups.filter(group => group.name.trim().toLocaleLowerCase('ru-RU') !== 'товары'))
 watch(activeGroup, () => { page.value = 1 })
-usePageSeo(`Коллекция ${collection.name}`, collection.description, `/collections/${collection.slug}`)
+usePageSeo(`Коллекция ${collection.name}`, collectionSeoDescription(collection), `/collections/${collection.slug}`, { image: collection.image.src })
 </script>
 
 <template>

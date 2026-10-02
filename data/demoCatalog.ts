@@ -95,7 +95,7 @@ export const demoCategories: Category[] = [
   { id: 'acoustic-solutions', slug: 'acoustic-solutions', name: 'Акустические решения', description: 'Кабины и панели для тишины.', image: image(demoMedia.acoustic, 'Акустическое решение для офиса'), subcategories: makeSubs(subcategories.acoustic) },
   { id: 'storage-systems', slug: 'storage-systems', name: 'Системы хранения', description: 'Шкафы, тумбы и стеллажи.', image: image(demoMedia.storage, 'Система хранения в офисе'), subcategories: [] },
   { id: 'adjustable-desks', slug: 'adjustable-desks', name: 'Регулируемые столы', description: 'Столы с настройкой высоты.', image: image(demoMedia.adjustable, 'Стол с регулировкой высоты'), subcategories: [] },
-  { id: 'metal-furniture', slug: 'metal-furniture', name: 'Металлическая мебель', description: 'Шкафы, сейфы и стеллажи из металла.', image: image(demoMedia.metal, 'Металлический офисный стеллаж'), subcategories: makeSubs(subcategories.metal) },
+  { id: 'metal-furniture', slug: 'metal-furniture', name: 'Металлическая мебель', description: 'Шкафы, сейфы и стеллажи из металла.', image: image(demoMedia.metalCategory, 'Металлическая картотека Рива Металл'), subcategories: makeSubs(subcategories.metal) },
   { id: 'project-furniture', slug: 'project-furniture', name: 'Проектная мебель', description: 'Мебель по вашему проекту.', image: image(demoMedia.project, 'Проектный интерьер общественного пространства'), subcategories: makeSubs(subcategories.project) },
 ]
 

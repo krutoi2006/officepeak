@@ -21,7 +21,7 @@ const remainingColors = computed(() => Math.max(0, palette.value.length - visibl
 <template>
   <article class="group flex h-full flex-col border border-border bg-white">
     <NuxtLink :to="`/collections/${collection.slug}`" class="relative block aspect-[4/3] overflow-hidden bg-white">
-      <img :src="collection.image.src" :alt="collection.image.alt" loading="lazy" decoding="async" class="h-full w-full object-contain p-3 transition duration-300 group-hover:opacity-95 sm:p-4">
+      <img :src="collection.image.src" :alt="collection.image.alt" width="800" height="600" loading="lazy" decoding="async" class="h-full w-full object-contain p-3 transition duration-300 group-hover:opacity-95 sm:p-4">
     </NuxtLink>
     <div class="flex flex-1 flex-col p-5">
       <div class="mb-4 flex items-start justify-between gap-4">

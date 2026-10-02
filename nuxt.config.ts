@@ -11,9 +11,20 @@ export default defineNuxtConfig({
   css: ['~/assets/css/main.css'],
   nitro: {
     preset: staticCatalog ? 'static' : 'node-server',
+    compressPublicAssets: true,
     prerender: staticCatalog
       ? { crawlLinks: false, routes: ['/', '/catalog'] }
       : undefined,
+  },
+  routeRules: {
+    '/api/**': { headers: { 'x-robots-tag': 'noindex, nofollow', 'cache-control': 'no-store' } },
+    '/api/catalog/**': { headers: { 'x-robots-tag': 'noindex, nofollow', 'cache-control': 'public, max-age=300, stale-while-revalidate=3600' } },
+    '/search': { headers: { 'x-robots-tag': 'noindex, follow' } },
+    '/cart': { headers: { 'x-robots-tag': 'noindex, follow' } },
+    '/favorites': { headers: { 'x-robots-tag': 'noindex, follow' } },
+    '/checkout': { headers: { 'x-robots-tag': 'noindex, follow' } },
+    '/quote': { headers: { 'x-robots-tag': 'noindex, follow' } },
+    '/sitemap.xml': { headers: { 'cache-control': 'public, max-age=3600, stale-while-revalidate=86400' } },
   },
   runtimeConfig: {
     public: {
@@ -44,6 +55,7 @@ export default defineNuxtConfig({
       ],
       link: [
         { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+        { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
         { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap' },
         { rel: 'icon', href: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" fill="%23171A19"/><text x="50%25" y="58%25" dominant-baseline="middle" text-anchor="middle" fill="white" font-size="28" font-family="Arial">OP</text></svg>' },
       ]

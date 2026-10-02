@@ -12,7 +12,7 @@ const { data: favoriteData } = await useAsyncData<ProductListResponse>(
   { watch: [favoriteIds] },
 )
 const list = computed(() => (favoriteData.value?.items ?? []).filter(product => favorites.value.includes(product.id)))
-usePageSeo('Избранное', 'Сохранённые товары OFFICEPEAK.', '/favorites')
+usePageSeo('Избранное', 'Сохранённые товары OFFICEPEAK.', '/favorites', { noindex: true })
 </script>
 
 <template>

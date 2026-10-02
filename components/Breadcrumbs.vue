@@ -1,5 +1,25 @@
 <script setup lang="ts">
-defineProps<{ items: Array<{ label: string; to?: string }> }>()
+import { siteConfig } from '~/config/site'
+import { serializeJsonLd } from '~/utils/seo'
+
+const props = defineProps<{ items: Array<{ label: string; to?: string }> }>()
+const route = useRoute()
+useHead(() => ({
+  script: [{
+    key: `breadcrumbs-${route.path}`,
+    type: 'application/ld+json',
+    innerHTML: serializeJsonLd({
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: props.items.map((item, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: item.label,
+        item: new URL(item.to || route.path, siteConfig.siteUrl).toString(),
+      })),
+    }),
+  }],
+}))
 </script>
 
 <template>

@@ -75,7 +75,11 @@ onBeforeUnmount(() => {
         <img
           :src="item.src"
           :alt="item.alt"
+          width="1600"
+          height="900"
           :loading="index === 0 ? 'eager' : 'lazy'"
+          :fetchpriority="index === 0 ? 'high' : 'auto'"
+          decoding="async"
           class="h-full w-full object-contain p-3 sm:p-6"
         >
       </figure>

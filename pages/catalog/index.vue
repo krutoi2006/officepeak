@@ -80,7 +80,8 @@ watch(productQuery, () => {
 onBeforeUnmount(() => { if (refreshTimer) clearTimeout(refreshTimer) })
 const reset = () => { minPrice.value = priceFloor.value; maxPrice.value = priceCeil.value; category.value = ''; subcategory.value = ''; collection.value = ''; availability.value = ''; color.value = ''; sort.value = 'default'; page.value = 1 }
 
-usePageSeo('Каталог офисной мебели', 'Категории, коллекции и товары OFFICEPEAK с фильтрами по цене, наличию, цвету и назначению.', '/catalog')
+const hasFilterQuery = computed(() => Object.keys(route.query).length > 0)
+usePageSeo('Каталог офисной мебели', 'Категории, коллекции и товары OFFICEPEAK с фильтрами по цене, наличию, цвету и назначению.', '/catalog', { noindex: hasFilterQuery })
 </script>
 
 <template>
@@ -92,7 +93,7 @@ usePageSeo('Каталог офисной мебели', 'Категории, к
     <section aria-labelledby="catalog-categories" class="mb-16">
       <h2 id="catalog-categories" class="sr-only">Категории</h2>
       <div class="grid gap-px overflow-hidden border border-border bg-border sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        <NuxtLink v-for="item in categories" :key="item.id" :to="`/catalog/${item.slug}`" class="group flex min-h-28 items-center gap-4 bg-white p-4 transition hover:bg-surface"><img :src="item.image.src" :alt="item.image.alt" loading="lazy" class="h-16 w-20 shrink-0 object-cover"><span class="text-sm font-medium leading-5 group-hover:text-accent">{{ item.name }}</span></NuxtLink>
+        <NuxtLink v-for="item in categories" :key="item.id" :to="`/catalog/${item.slug}`" class="group flex min-h-28 items-center gap-4 bg-white p-4 transition hover:bg-surface"><img :src="item.image.src" :alt="item.image.alt" width="320" height="240" loading="lazy" decoding="async" class="h-16 w-20 shrink-0 object-cover"><span class="text-sm font-medium leading-5 group-hover:text-accent">{{ item.name }}</span></NuxtLink>
       </div>
     </section>
 

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 defineProps<{ error: { statusCode?: number; statusMessage?: string; message?: string } }>()
 const handleError = () => clearError({ redirect: '/' })
+useSeoMeta({ robots: 'noindex, nofollow' })
 </script>
 
 <template>

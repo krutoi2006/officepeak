@@ -31,7 +31,7 @@ const totalResults = computed(() => (productData.value?.total ?? 0) + collection
 const submit = () => router.replace({ query: query.value.trim() ? { q: query.value.trim() } : {} })
 watch(() => route.query.q, value => { query.value = String(value ?? '') })
 watch(normalized, () => { searchPage.value = 1 })
-usePageSeo('Поиск', 'Поиск по названиям, артикулам, категориям, коллекциям и характеристикам каталога OFFICEPEAK.', '/search')
+usePageSeo('Поиск', 'Поиск по названиям, артикулам, категориям, коллекциям и характеристикам каталога OFFICEPEAK.', '/search', { noindex: true })
 </script>
 
 <template>

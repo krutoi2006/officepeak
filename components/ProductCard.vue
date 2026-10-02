@@ -34,7 +34,7 @@ watch(() => variant.value.id, () => {
   <article class="product-card group flex h-full min-w-0 flex-col">
     <div class="relative mb-4 aspect-[4/3] overflow-hidden bg-white">
       <NuxtLink :to="`/product/${product.slug}`" class="block h-full">
-        <img :key="productImage.src" :src="productImage.src" :alt="productImage.alt" loading="lazy" decoding="async" class="h-full w-full object-contain p-2 transition duration-300 group-hover:opacity-95 sm:p-3">
+        <img :key="productImage.src" :src="productImage.src" :alt="productImage.alt" width="800" height="600" loading="lazy" decoding="async" class="h-full w-full object-contain p-2 transition duration-300 group-hover:opacity-95 sm:p-3">
       </NuxtLink>
       <span v-if="product.isNew" class="absolute left-3 top-3 bg-accent px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-white">Новинка</span>
       <button type="button" class="icon-button absolute right-3 top-3 bg-white/90" :aria-label="favorites.includes(product.id) ? 'Удалить из избранного' : 'Добавить в избранное'" @click="toggleFavorite(product.id)">

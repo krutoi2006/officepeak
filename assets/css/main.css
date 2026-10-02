@@ -37,6 +37,7 @@
 }
 .fade-enter-active,.fade-leave-active{transition:opacity .2s}.fade-enter-from,.fade-leave-to{opacity:0}
 .drawer-enter-active,.drawer-leave-active{transition:transform .3s ease}.drawer-enter-from,.drawer-leave-to{transform:translateX(100%)}
+.cookie-banner-enter-active,.cookie-banner-leave-active{transition:opacity .25s ease,transform .25s ease}.cookie-banner-enter-from,.cookie-banner-leave-to{opacity:0;transform:translateY(1rem)}
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }

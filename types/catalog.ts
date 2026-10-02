@@ -56,6 +56,7 @@ export interface NomenclatureGroup {
 export interface Collection {
   id: string
   slug: string
+  legacySlug?: string
   name: string
   categoryId: string
   subcategoryId?: string
@@ -73,6 +74,7 @@ export interface Collection {
 export interface Product {
   id: string
   slug: string
+  legacySlug?: string
   name: string
   categoryId: string
   subcategoryId?: string

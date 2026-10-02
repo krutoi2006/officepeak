@@ -11,5 +11,6 @@ await hydrateCart()
     <SiteFooter />
     <CartDrawer />
     <LeadModal />
+    <CookieConsent />
   </div>
 </template>

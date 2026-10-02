@@ -24,7 +24,7 @@ const audiences = [
   { title: 'Для бизнеса', text: 'Подберём мебель для вашего офиса.', to: '/business', icon: BriefcaseBusiness },
   { title: 'Дизайнерам', text: 'Поможем выбрать мебель и материалы.', to: '/designers', icon: Layers3 },
 ]
-usePageSeo('Офисная мебель', 'Офисная мебель OFFICEPEAK для работы, встреч и отдыха.', '/')
+usePageSeo('Офисная мебель для бизнеса', 'Офисные столы, кресла, шкафы и готовые мебельные коллекции OFFICEPEAK. Подбор, дизайн-проект, доставка и сборка мебели для бизнеса.', '/', { image: demoMedia.hero[0] })
 </script>
 
 <template>
@@ -38,7 +38,7 @@ usePageSeo('Офисная мебель', 'Офисная мебель OFFICEPEA
       </div>
       <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         <NuxtLink v-for="category in categories" :key="category.id" :to="`/catalog/${category.slug}`" class="group relative aspect-[4/3] overflow-hidden bg-surface">
-          <img :src="category.image.src" :alt="category.image.alt" loading="lazy" class="h-full w-full object-cover transition duration-700 group-hover:scale-105">
+          <img :src="category.image.src" :alt="category.image.alt" width="800" height="600" loading="lazy" decoding="async" class="h-full w-full object-cover transition duration-700 group-hover:scale-105">
           <div class="absolute inset-0 bg-gradient-to-t from-black/75 via-black/15 to-transparent" />
           <div class="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-5 text-white"><h3 class="text-xl font-light">{{ category.name }}</h3><ArrowRight class="h-5 w-5 shrink-0 transition group-hover:translate-x-1" /></div>
         </NuxtLink>
@@ -59,7 +59,7 @@ usePageSeo('Офисная мебель', 'Офисная мебель OFFICEPEA
     </section>
 
     <section class="container-page section-space grid gap-10 lg:grid-cols-2 lg:items-center">
-      <img :src="demoMedia.project" alt="Мебель в офисе" loading="lazy" class="aspect-[4/3] h-full w-full object-cover">
+      <img :src="demoMedia.project" alt="Мебель в офисе" width="1200" height="900" loading="lazy" decoding="async" class="aspect-[4/3] h-full w-full object-cover">
       <div class="lg:px-10"><h2 class="mb-6 display-title">Мебель на заказ</h2><p class="mb-8 max-w-xl leading-7 text-secondary">Сделаем мебель под размеры и задачи вашего офиса.</p><div class="flex flex-wrap gap-3"><NuxtLink to="/custom-furniture" class="btn-primary">Подробнее</NuxtLink><button type="button" class="btn-secondary" @click="openLead('manager')">Вызвать менеджера</button></div></div>
     </section>
 

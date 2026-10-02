@@ -1,4 +1,5 @@
 import type { CatalogSnapshot, CatalogSource } from '~/types/catalog'
+import { collectionSeoSlug, productSeoSlug } from '~/utils/seo'
 
 export class StaticCatalogSource implements CatalogSource {
   constructor(private readonly snapshot: CatalogSnapshot) {}
@@ -12,6 +13,8 @@ export const normalizeCatalog = (snapshot: CatalogSnapshot): CatalogSnapshot => 
   categories: snapshot.categories.map(category => ({ ...category, subcategories: [...category.subcategories] })),
   collections: snapshot.collections.map(collection => ({
     ...collection,
+    legacySlug: collection.legacySlug ?? collection.slug,
+    slug: collectionSeoSlug(collection),
     images: [...collection.images],
     colors: [...collection.colors],
     groups: [...collection.groups],
@@ -19,6 +22,8 @@ export const normalizeCatalog = (snapshot: CatalogSnapshot): CatalogSnapshot => 
   })),
   products: snapshot.products.map(product => ({
     ...product,
+    legacySlug: product.legacySlug ?? product.slug,
+    slug: productSeoSlug(product),
     images: [...product.images],
     variants: [...product.variants],
     materials: [...product.materials],

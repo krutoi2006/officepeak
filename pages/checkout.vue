@@ -35,7 +35,7 @@ const submit = async () => {
     errors.submit = fetchError.data?.message ?? fetchError.data?.statusMessage ?? 'Не удалось отправить заявку. Попробуйте ещё раз.'
   } finally { sending.value = false }
 }
-usePageSeo('Оформление заказа', 'Оформление заявки по выбранным товарам OFFICEPEAK без онлайн-оплаты.', '/checkout')
+usePageSeo('Оформление заказа', 'Оформление заявки по выбранным товарам OFFICEPEAK без онлайн-оплаты.', '/checkout', { noindex: true })
 </script>
 
 <template>

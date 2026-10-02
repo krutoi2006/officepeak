@@ -4,6 +4,7 @@ import { demoCatalog } from '~/data/demoCatalog'
 import rivaCollectionDescriptions from '~/config/riva-collection-descriptions.json'
 import rivaSyncConfig from '~/config/riva-sync.json'
 import { assertCatalogSnapshot, mergeCatalogSnapshots, normalizeCatalog } from '~/services/catalogAdapter'
+import { groupCatalogSections } from '~/services/catalogGrouping'
 import type { CatalogOrigin, CatalogSnapshot, CatalogSource } from '~/types/catalog'
 
 interface CachedCatalog {
@@ -125,10 +126,10 @@ export const loadCatalogState = async (): Promise<CatalogState> => {
   const loaded = (await Promise.all(providers.map(loadProvider))).filter((item): item is CachedCatalog => Boolean(item))
   const first = loaded[0]
   if (!first) return { source: 'demo', snapshot: fallbackSnapshot }
-  if (loaded.length === 1) return { source: first.source, snapshot: first.snapshot }
+  if (loaded.length === 1) return { source: first.source, snapshot: groupCatalogSections(first.snapshot) }
   const signature = loaded.map(item => `${item.path}:${item.signature}`).join('|')
   if (combinedCache?.signature !== signature) {
-    combinedCache = { signature, snapshot: mergeCatalogSnapshots(loaded.map(item => item.snapshot)) }
+    combinedCache = { signature, snapshot: groupCatalogSections(mergeCatalogSnapshots(loaded.map(item => item.snapshot))) }
   }
   return { source: 'combined', snapshot: combinedCache.snapshot }
 }
